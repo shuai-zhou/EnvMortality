@@ -1,0 +1,1883 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\szhou\OneDrive - southalabama.edu\env_mortality\analysis\results/table_2.log
+  log type:  text
+ opened on:   8 Sep 2025, 11:23:43
+
+. 
+. *==========================================================
+. * cv
+. *==========================================================
+. ** 0_1
+. use "$data/resdata_final_age_0_1_cv.dta", clear
+
+. merge 1:1 countyfips year using "$data/county_poverty_2009_2019.dta", gen(mg)
+(note: variable year was int, now float to accommodate using data's values)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            72
+        from master                        72  (mg==1)
+        from using                          0  (mg==2)
+
+    matched                            34,193  (mg==3)
+    -----------------------------------------
+
+. tab mg, mi
+
+                     mg |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+        master only (1) |         72        0.21        0.21
+            matched (3) |     34,193       99.79      100.00
+------------------------+-----------------------------------
+                  Total |     34,265      100.00
+
+. label define newmetro 0 "Nonmetropolitan county" 1 "Metropolitan county"
+
+. label values metro newmetro
+
+. xtset cfips year
+       panel variable:  cfips (strongly balanced)
+        time variable:  year, 2009 to 2019
+                delta:  1 unit
+
+. xtreg rate tmean pm25 ///
+>         c.tmean#c.tmean#c.pm25#i.metro ///
+>         inc_avg coll insurcov pov pop_0_1 i.year, fe
+
+Fixed-effects (within) regression               Number of obs     =     33,830
+Group variable: cfips                           Number of groups  =      3,076
+
+R-sq:                                           Obs per group:
+     within  = 0.5010                                         min =          6
+     between = 0.2593                                         avg =       11.0
+     overall = 0.2002                                         max =         11
+
+                                                F(19,30735)       =    1623.84
+corr(u_i, Xb)  = 0.2941                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------------------
+                        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------------+----------------------------------------------------------------
+                       tmean |   .0218665   .0048522     4.51   0.000     .0123561    .0313769
+                        pm25 |   .0275767   .0049952     5.52   0.000     .0177859    .0373674
+                             |
+metro#c.tmean#c.tmean#c.pm25 |
+     Nonmetropolitan county  |    .000071   .0000223     3.18   0.001     .0000273    .0001146
+        Metropolitan county  |   -.000069   .0000227    -3.04   0.002    -.0001135   -.0000246
+                             |
+                     inc_avg |   .0009636   .0007469     1.29   0.197    -.0005003    .0024275
+                        coll |  -.0233465   .0012151   -19.21   0.000    -.0257281   -.0209649
+                    insurcov |  -.0037015   .0013783    -2.69   0.007     -.006403       -.001
+                         pov |  -.0163439   .0012644   -12.93   0.000    -.0188222   -.0138655
+                     pop_0_1 |   -.000034   .0000117    -2.91   0.004     -.000057   -.0000111
+                             |
+                        year |
+                       2010  |  -.4397604   .0099746   -44.09   0.000    -.4593111   -.4202097
+                       2011  |  -.4583903   .0106009   -43.24   0.000    -.4791685    -.437612
+                       2012  |  -.5007982   .0127636   -39.24   0.000    -.5258154   -.4757811
+                       2013  |   -.738508   .0106781   -69.16   0.000    -.7594374   -.7175785
+                       2014  |  -.8449841   .0123549   -68.39   0.000    -.8692002   -.8207679
+                       2015  |  -.7706286   .0148817   -51.78   0.000    -.7997974   -.7414597
+                       2016  |  -.6694893   .0173254   -38.64   0.000    -.7034478   -.6355308
+                       2017  |  -.7897661   .0165537   -47.71   0.000    -.8222121   -.7573201
+                       2018  |  -.9865528   .0163359   -60.39   0.000    -1.018572   -.9545337
+                       2019  |  -1.084472   .0167294   -64.82   0.000    -1.117262   -1.051681
+                             |
+                       _cons |   14.43121   .1468795    98.25   0.000     14.14332     14.7191
+-----------------------------+----------------------------------------------------------------
+                     sigma_u |  2.7588811
+                     sigma_e |  .37438583
+                         rho |  .98191793   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------------------
+F test that all u_i=0: F(3075, 30735) = 336.04               Prob > F = 0.0000
+
+. 
+. ** test for direction of change
+. ** for each line, you can tell whether the slope is positive, flat, or negative
+. ** and whether that slope is statistically different from 0
+. margins, dydx(tmean) at(tmean=(0 15 25) pm25=(5 10 15) metro=(0 1))
+
+Average marginal effects                        Number of obs     =     33,830
+Model VCE    : Conventional
+
+Expression   : Linear prediction, predict()
+dy/dx w.r.t. : tmean
+
+1._at        : tmean           =           0
+               pm25            =           5
+               metro           =           0
+
+2._at        : tmean           =           0
+               pm25            =           5
+               metro           =           1
+
+3._at        : tmean           =           0
+               pm25            =          10
+               metro           =           0
+
+4._at        : tmean           =           0
+               pm25            =          10
+               metro           =           1
+
+5._at        : tmean           =           0
+               pm25            =          15
+               metro           =           0
+
+6._at        : tmean           =           0
+               pm25            =          15
+               metro           =           1
+
+7._at        : tmean           =          15
+               pm25            =           5
+               metro           =           0
+
+8._at        : tmean           =          15
+               pm25            =           5
+               metro           =           1
+
+9._at        : tmean           =          15
+               pm25            =          10
+               metro           =           0
+
+10._at       : tmean           =          15
+               pm25            =          10
+               metro           =           1
+
+11._at       : tmean           =          15
+               pm25            =          15
+               metro           =           0
+
+12._at       : tmean           =          15
+               pm25            =          15
+               metro           =           1
+
+13._at       : tmean           =          25
+               pm25            =           5
+               metro           =           0
+
+14._at       : tmean           =          25
+               pm25            =           5
+               metro           =           1
+
+15._at       : tmean           =          25
+               pm25            =          10
+               metro           =           0
+
+16._at       : tmean           =          25
+               pm25            =          10
+               metro           =           1
+
+17._at       : tmean           =          25
+               pm25            =          15
+               metro           =           0
+
+18._at       : tmean           =          25
+               pm25            =          15
+               metro           =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+tmean        |
+         _at |
+          1  |   .0218665   .0048522     4.51   0.000     .0123564    .0313766
+          2  |   .0218665   .0048522     4.51   0.000     .0123564    .0313766
+          3  |   .0218665   .0048522     4.51   0.000     .0123564    .0313766
+          4  |   .0218665   .0048522     4.51   0.000     .0123564    .0313766
+          5  |   .0218665   .0048522     4.51   0.000     .0123564    .0313766
+          6  |   .0218665   .0048522     4.51   0.000     .0123564    .0313766
+          7  |     .03251    .004385     7.41   0.000     .0239155    .0411044
+          8  |    .011516   .0046325     2.49   0.013     .0024365    .0205955
+          9  |   .0431535   .0061052     7.07   0.000     .0311876    .0551193
+         10  |   .0011655   .0065205     0.18   0.858    -.0116143    .0139454
+         11  |   .0537969   .0088135     6.10   0.000     .0365229     .071071
+         12  |  -.0091849    .009312    -0.99   0.324    -.0274361    .0090662
+         13  |   .0396056   .0053641     7.38   0.000     .0290922    .0501191
+         14  |   .0046157   .0057382     0.80   0.421    -.0066309    .0158623
+         15  |   .0573448   .0098038     5.85   0.000     .0381297    .0765598
+         16  |  -.0126351   .0103241    -1.22   0.221      -.03287    .0075998
+         17  |   .0750839   .0150188     5.00   0.000     .0456475    .1045203
+         18  |  -.0298859   .0156374    -1.91   0.056    -.0605346    .0007628
+------------------------------------------------------------------------------
+
+. 
+. ** wald test whether all coefficients in the interaction term are 0
+. testparm c.tmean#c.tmean#c.pm25#i.metro
+
+ ( 1)  0b.metro#c.tmean#c.tmean#c.pm25 = 0
+ ( 2)  1.metro#c.tmean#c.tmean#c.pm25 = 0
+
+       F(  2, 30735) =   26.55
+            Prob > F =    0.0000
+
+. 
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |     33,830  -24899.88  -13142.86      20   26325.72    26494.3
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] BIC note.
+
+. matrix ics = r(S)
+
+. local ll = ics[1, 3]
+
+. local aic = ics[1, 5]
+
+. local bic = ics[1, 6]
+
+. outreg2 using "$results/table_2.doc", replace stats(coef) label nodepvar dec(3) ///
+>         ctitle("cv_0_1") alpha(0.001, 0.01, 0.05) symbol(***, **, *) drop(i.cfips) noomit ///
+>     addstat("AIC", `aic', "BIC", `bic')
+results/table_2.doc
+dir : seeout
+
+. 
+. ** 1_14
+. use "$data/resdata_final_age_1_14_cv.dta", clear
+
+. merge 1:1 countyfips year using "$data/county_poverty_2009_2019.dta", gen(mg)
+(note: variable year was int, now float to accommodate using data's values)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            72
+        from master                        72  (mg==1)
+        from using                          0  (mg==2)
+
+    matched                            34,193  (mg==3)
+    -----------------------------------------
+
+. tab mg, mi
+
+                     mg |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+        master only (1) |         72        0.21        0.21
+            matched (3) |     34,193       99.79      100.00
+------------------------+-----------------------------------
+                  Total |     34,265      100.00
+
+. label define newmetro 0 "Nonmetropolitan county" 1 "Metropolitan county"
+
+. label values metro newmetro
+
+. xtset cfips year
+       panel variable:  cfips (strongly balanced)
+        time variable:  year, 2009 to 2019
+                delta:  1 unit
+
+. xtreg rate tmean pm25 ///
+>         c.tmean#c.tmean#c.pm25#i.metro ///
+>         inc_avg coll insurcov pov pop_1_14 i.year, fe
+
+Fixed-effects (within) regression               Number of obs     =     33,830
+Group variable: cfips                           Number of groups  =      3,076
+
+R-sq:                                           Obs per group:
+     within  = 0.6697                                         min =          6
+     between = 0.0482                                         avg =       11.0
+     overall = 0.0608                                         max =         11
+
+                                                F(19,30735)       =    3279.45
+corr(u_i, Xb)  = -0.0309                        Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------------------
+                        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------------+----------------------------------------------------------------
+                       tmean |  -.0043442   .0002633   -16.50   0.000    -.0048603   -.0038281
+                        pm25 |  -.0049529   .0002715   -18.25   0.000     -.005485   -.0044209
+                             |
+metro#c.tmean#c.tmean#c.pm25 |
+     Nonmetropolitan county  |   .0000441   1.21e-06    36.44   0.000     .0000417    .0000464
+        Metropolitan county  |   .0000329   1.23e-06    26.72   0.000     .0000305    .0000353
+                             |
+                     inc_avg |   .0001599   .0000405     3.95   0.000     .0000805    .0002394
+                        coll |  -.0014126   .0000658   -21.45   0.000    -.0015417   -.0012836
+                    insurcov |  -.0003178   .0000747    -4.26   0.000    -.0004641   -.0001715
+                         pov |  -.0002784   .0000685    -4.06   0.000    -.0004127   -.0001441
+                    pop_1_14 |   9.44e-07   6.43e-08    14.69   0.000     8.18e-07    1.07e-06
+                             |
+                        year |
+                       2010  |  -.0382742   .0005404   -70.83   0.000    -.0393333    -.037215
+                       2011  |  -.0411977   .0005744   -71.72   0.000    -.0423236   -.0400718
+                       2012  |  -.0556073   .0006915   -80.41   0.000    -.0569626   -.0542519
+                       2013  |  -.0634249   .0005785  -109.63   0.000    -.0645589    -.062291
+                       2014  |  -.0677122   .0006696  -101.12   0.000    -.0690247   -.0663997
+                       2015  |  -.0596823   .0008065   -74.00   0.000    -.0612631   -.0581016
+                       2016  |  -.0554391    .000939   -59.04   0.000    -.0572796   -.0535986
+                       2017  |  -.0666596   .0008971   -74.30   0.000     -.068418   -.0649012
+                       2018  |   -.082832    .000885   -93.60   0.000    -.0845665   -.0810974
+                       2019  |  -.0894244   .0009061   -98.70   0.000    -.0912003   -.0876485
+                             |
+                       _cons |   .9943918    .007962   124.89   0.000      .978786    1.009998
+-----------------------------+----------------------------------------------------------------
+                     sigma_u |  .22754123
+                     sigma_e |  .02028875
+                         rho |  .99211228   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------------------
+F test that all u_i=0: F(3075, 30735) = 685.81               Prob > F = 0.0000
+
+. 
+. ** test for direction of change
+. ** for each line, you can tell whether the slope is positive, flat, or negative
+. ** and whether that slope is statistically different from 0
+. margins, dydx(tmean) at(tmean=(0 15 25) pm25=(5 10 15) metro=(0 1))
+
+Average marginal effects                        Number of obs     =     33,830
+Model VCE    : Conventional
+
+Expression   : Linear prediction, predict()
+dy/dx w.r.t. : tmean
+
+1._at        : tmean           =           0
+               pm25            =           5
+               metro           =           0
+
+2._at        : tmean           =           0
+               pm25            =           5
+               metro           =           1
+
+3._at        : tmean           =           0
+               pm25            =          10
+               metro           =           0
+
+4._at        : tmean           =           0
+               pm25            =          10
+               metro           =           1
+
+5._at        : tmean           =           0
+               pm25            =          15
+               metro           =           0
+
+6._at        : tmean           =           0
+               pm25            =          15
+               metro           =           1
+
+7._at        : tmean           =          15
+               pm25            =           5
+               metro           =           0
+
+8._at        : tmean           =          15
+               pm25            =           5
+               metro           =           1
+
+9._at        : tmean           =          15
+               pm25            =          10
+               metro           =           0
+
+10._at       : tmean           =          15
+               pm25            =          10
+               metro           =           1
+
+11._at       : tmean           =          15
+               pm25            =          15
+               metro           =           0
+
+12._at       : tmean           =          15
+               pm25            =          15
+               metro           =           1
+
+13._at       : tmean           =          25
+               pm25            =           5
+               metro           =           0
+
+14._at       : tmean           =          25
+               pm25            =           5
+               metro           =           1
+
+15._at       : tmean           =          25
+               pm25            =          10
+               metro           =           0
+
+16._at       : tmean           =          25
+               pm25            =          10
+               metro           =           1
+
+17._at       : tmean           =          25
+               pm25            =          15
+               metro           =           0
+
+18._at       : tmean           =          25
+               pm25            =          15
+               metro           =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+tmean        |
+         _at |
+          1  |  -.0043442   .0002633   -16.50   0.000    -.0048602   -.0038282
+          2  |  -.0043442   .0002633   -16.50   0.000    -.0048602   -.0038282
+          3  |  -.0043442   .0002633   -16.50   0.000    -.0048602   -.0038282
+          4  |  -.0043442   .0002633   -16.50   0.000    -.0048602   -.0038282
+          5  |  -.0043442   .0002633   -16.50   0.000    -.0048602   -.0038282
+          6  |  -.0043442   .0002633   -16.50   0.000    -.0048602   -.0038282
+          7  |   .0022666   .0002377     9.54   0.000     .0018007    .0027324
+          8  |   .0005941    .000251     2.37   0.018     .0001021     .001086
+          9  |   .0088773   .0003309    26.83   0.000     .0082289    .0095258
+         10  |   .0055323   .0003536    15.65   0.000     .0048393    .0062253
+         11  |   .0154881   .0004778    32.42   0.000     .0145517    .0164246
+         12  |   .0104706   .0005053    20.72   0.000     .0094801     .011461
+         13  |   .0066738   .0002907    22.96   0.000      .006104    .0072435
+         14  |   .0038862   .0003111    12.49   0.000     .0032765    .0044959
+         15  |   .0176917   .0005315    33.29   0.000       .01665    .0187335
+         16  |   .0121166   .0005603    21.62   0.000     .0110184    .0132149
+         17  |   .0287097   .0008145    35.25   0.000     .0271133     .030306
+         18  |   .0203471   .0008491    23.96   0.000     .0186828    .0220113
+------------------------------------------------------------------------------
+
+. 
+. ** wald test whether all coefficients in the interaction term are 0
+. testparm c.tmean#c.tmean#c.pm25#i.metro
+
+ ( 1)  0b.metro#c.tmean#c.tmean#c.pm25 = 0
+ ( 2)  1.metro#c.tmean#c.tmean#c.pm25 = 0
+
+       F(  2, 30735) =  674.44
+            Prob > F =    0.0000
+
+. 
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |     33,830   66742.69   85479.04      20  -170918.1  -170749.5
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] BIC note.
+
+. matrix ics = r(S)
+
+. local ll = ics[1, 3]
+
+. local aic = ics[1, 5]
+
+. local bic = ics[1, 6]
+
+. outreg2 using "$results/table_2.doc", append stats(coef) label nodepvar dec(3) ///
+>         ctitle("cv_1_14") alpha(0.001, 0.01, 0.05) symbol(***, **, *) drop(i.cfips) noomit ///
+>     addstat("AIC", `aic', "BIC", `bic')
+results/table_2.doc
+dir : seeout
+
+. 
+. ** 15_64
+. use "$data/resdata_final_age_15_64_cv.dta", clear
+
+. merge 1:1 countyfips year using "$data/county_poverty_2009_2019.dta", gen(mg)
+(note: variable year was int, now float to accommodate using data's values)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            72
+        from master                        72  (mg==1)
+        from using                          0  (mg==2)
+
+    matched                            34,193  (mg==3)
+    -----------------------------------------
+
+. tab mg, mi
+
+                     mg |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+        master only (1) |         72        0.21        0.21
+            matched (3) |     34,193       99.79      100.00
+------------------------+-----------------------------------
+                  Total |     34,265      100.00
+
+. label define newmetro 0 "Nonmetropolitan county" 1 "Metropolitan county"
+
+. label values metro newmetro
+
+. xtset cfips year
+       panel variable:  cfips (strongly balanced)
+        time variable:  year, 2009 to 2019
+                delta:  1 unit
+
+. xtreg rate tmean pm25 ///
+>         c.tmean#c.tmean#c.pm25#i.metro ///
+>         inc_avg coll insurcov pov pop_15_64 i.year, fe
+
+Fixed-effects (within) regression               Number of obs     =     33,830
+Group variable: cfips                           Number of groups  =      3,076
+
+R-sq:                                           Obs per group:
+     within  = 0.3763                                         min =          6
+     between = 0.0155                                         avg =       11.0
+     overall = 0.0178                                         max =         11
+
+                                                F(19,30735)       =     975.89
+corr(u_i, Xb)  = -0.1510                        Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------------------
+                        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------------+----------------------------------------------------------------
+                       tmean |   .8476195   .0337448    25.12   0.000     .7814782    .9137608
+                        pm25 |   .0111346   .0348175     0.32   0.749    -.0571092    .0793785
+                             |
+metro#c.tmean#c.tmean#c.pm25 |
+     Nonmetropolitan county  |  -.0056484   .0001548   -36.48   0.000    -.0059519    -.005345
+        Metropolitan county  |  -.0013554   .0001581    -8.57   0.000    -.0016653   -.0010455
+                             |
+                     inc_avg |  -.0594278   .0051985   -11.43   0.000    -.0696172   -.0492384
+                        coll |   -.099076   .0084464   -11.73   0.000    -.1156313   -.0825208
+                    insurcov |   .1170703   .0095696    12.23   0.000     .0983136    .1358271
+                         pov |  -.0123043   .0087828    -1.40   0.161     -.029519    .0049104
+                   pop_15_64 |  -.0000403   2.18e-06   -18.50   0.000    -.0000446   -.0000361
+                             |
+                        year |
+                       2010  |  -1.849577   .0692587   -26.71   0.000    -1.985327   -1.713827
+                       2011  |   -1.97628   .0736578   -26.83   0.000    -2.120652   -1.831908
+                       2012  |  -2.127769   .0886803   -23.99   0.000    -2.301586   -1.953952
+                       2013  |  -1.192962   .0743101   -16.05   0.000    -1.338613   -1.047311
+                       2014  |  -.9146126   .0859849   -10.64   0.000    -1.083146   -.7460787
+                       2015  |  -.6298494   .1035042    -6.09   0.000     -.832722   -.4269768
+                       2016  |   .1562787    .120522     1.30   0.195    -.0799494    .3925069
+                       2017  |   .9291635   .1151518     8.07   0.000     .7034611    1.154866
+                       2018  |   1.328697   .1136233    11.69   0.000     1.105991    1.551403
+                       2019  |    1.11501   .1163779     9.58   0.000     .8869047    1.343116
+                             |
+                       _cons |   85.09052   1.017693    83.61   0.000      83.0958    87.08524
+-----------------------------+----------------------------------------------------------------
+                     sigma_u |  32.696644
+                     sigma_e |  2.6003106
+                         rho |  .99371499   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------------------
+F test that all u_i=0: F(3075, 30735) = 608.42               Prob > F = 0.0000
+
+. 
+. ** test for direction of change
+. ** for each line, you can tell whether the slope is positive, flat, or negative
+. ** and whether that slope is statistically different from 0
+. margins, dydx(tmean) at(tmean=(0 15 25) pm25=(5 10 15) metro=(0 1))
+
+Average marginal effects                        Number of obs     =     33,830
+Model VCE    : Conventional
+
+Expression   : Linear prediction, predict()
+dy/dx w.r.t. : tmean
+
+1._at        : tmean           =           0
+               pm25            =           5
+               metro           =           0
+
+2._at        : tmean           =           0
+               pm25            =           5
+               metro           =           1
+
+3._at        : tmean           =           0
+               pm25            =          10
+               metro           =           0
+
+4._at        : tmean           =           0
+               pm25            =          10
+               metro           =           1
+
+5._at        : tmean           =           0
+               pm25            =          15
+               metro           =           0
+
+6._at        : tmean           =           0
+               pm25            =          15
+               metro           =           1
+
+7._at        : tmean           =          15
+               pm25            =           5
+               metro           =           0
+
+8._at        : tmean           =          15
+               pm25            =           5
+               metro           =           1
+
+9._at        : tmean           =          15
+               pm25            =          10
+               metro           =           0
+
+10._at       : tmean           =          15
+               pm25            =          10
+               metro           =           1
+
+11._at       : tmean           =          15
+               pm25            =          15
+               metro           =           0
+
+12._at       : tmean           =          15
+               pm25            =          15
+               metro           =           1
+
+13._at       : tmean           =          25
+               pm25            =           5
+               metro           =           0
+
+14._at       : tmean           =          25
+               pm25            =           5
+               metro           =           1
+
+15._at       : tmean           =          25
+               pm25            =          10
+               metro           =           0
+
+16._at       : tmean           =          25
+               pm25            =          10
+               metro           =           1
+
+17._at       : tmean           =          25
+               pm25            =          15
+               metro           =           0
+
+18._at       : tmean           =          25
+               pm25            =          15
+               metro           =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+tmean        |
+         _at |
+          1  |   .8476195   .0337448    25.12   0.000     .7814808    .9137582
+          2  |   .8476195   .0337448    25.12   0.000     .7814808    .9137582
+          3  |   .8476195   .0337448    25.12   0.000     .7814808    .9137582
+          4  |   .8476195   .0337448    25.12   0.000     .7814808    .9137582
+          5  |   .8476195   .0337448    25.12   0.000     .7814808    .9137582
+          6  |   .8476195   .0337448    25.12   0.000     .7814808    .9137582
+          7  |   .0003533   .0304802     0.01   0.991    -.0593867    .0600933
+          8  |   .6443128   .0321731    20.03   0.000     .5812547     .707371
+          9  |  -.8469129   .0424055   -19.97   0.000    -.9300261   -.7637998
+         10  |   .4410062   .0453461     9.73   0.000     .3521295     .529883
+         11  |  -1.694179   .0612067   -27.68   0.000    -1.814142   -1.574216
+         12  |   .2376996   .0648243     3.67   0.000     .1106462    .3647529
+         13  |  -.5644909   .0372642   -15.15   0.000    -.6375274   -.4914543
+         14  |   .5087751   .0398862    12.76   0.000     .4305996    .5869506
+         15  |  -1.976601   .0680835   -29.03   0.000    -2.110042    -1.84316
+         16  |   .1699307    .071885     2.36   0.018     .0290387    .3108227
+         17  |  -3.388712   .1043021   -32.49   0.000     -3.59314   -3.184283
+         18  |  -.1689137   .1089419    -1.55   0.121    -.3824359    .0446085
+------------------------------------------------------------------------------
+
+. 
+. ** wald test whether all coefficients in the interaction term are 0
+. testparm c.tmean#c.tmean#c.pm25#i.metro
+
+ ( 1)  0b.metro#c.tmean#c.tmean#c.pm25 = 0
+ ( 2)  1.metro#c.tmean#c.tmean#c.pm25 = 0
+
+       F(  2, 30735) =  843.26
+            Prob > F =    0.0000
+
+. 
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |     33,830  -86693.52  -78708.76      20   157457.5   157626.1
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] BIC note.
+
+. matrix ics = r(S)
+
+. local ll = ics[1, 3]
+
+. local aic = ics[1, 5]
+
+. local bic = ics[1, 6]
+
+. outreg2 using "$results/table_2.doc", append stats(coef) label nodepvar dec(3) ///
+>         ctitle("cv_15_64") alpha(0.001, 0.01, 0.05) symbol(***, **, *) drop(i.cfips) noomit ///
+>     addstat("AIC", `aic', "BIC", `bic')
+results/table_2.doc
+dir : seeout
+
+. 
+. ** 65
+. use "$data/resdata_final_age_65_cv.dta", clear
+
+. merge 1:1 countyfips year using "$data/county_poverty_2009_2019.dta", gen(mg)
+(note: variable year was int, now float to accommodate using data's values)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            72
+        from master                        72  (mg==1)
+        from using                          0  (mg==2)
+
+    matched                            34,193  (mg==3)
+    -----------------------------------------
+
+. tab mg, mi
+
+                     mg |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+        master only (1) |         72        0.21        0.21
+            matched (3) |     34,193       99.79      100.00
+------------------------+-----------------------------------
+                  Total |     34,265      100.00
+
+. label define newmetro 0 "Nonmetropolitan county" 1 "Metropolitan county"
+
+. label values metro newmetro
+
+. xtset cfips year
+       panel variable:  cfips (strongly balanced)
+        time variable:  year, 2009 to 2019
+                delta:  1 unit
+
+. xtreg rate tmean pm25 ///
+>         c.tmean#c.tmean#c.pm25#i.metro ///
+>         inc_avg coll insurcov pov pop_65 i.year, fe
+
+Fixed-effects (within) regression               Number of obs     =     33,830
+Group variable: cfips                           Number of groups  =      3,076
+
+R-sq:                                           Obs per group:
+     within  = 0.5427                                         min =          6
+     between = 0.2641                                         avg =       11.0
+     overall = 0.1924                                         max =         11
+
+                                                F(19,30735)       =    1919.41
+corr(u_i, Xb)  = 0.2629                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------------------
+                        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------------+----------------------------------------------------------------
+                       tmean |  -10.80662   .7267711   -14.87   0.000    -12.23112   -9.382122
+                        pm25 |  -3.340238   .7483799    -4.46   0.000    -4.807094   -1.873383
+                             |
+metro#c.tmean#c.tmean#c.pm25 |
+     Nonmetropolitan county  |   .0581363   .0033409    17.40   0.000     .0515879    .0646847
+        Metropolitan county  |   .0413408   .0034037    12.15   0.000     .0346694    .0480121
+                             |
+                     inc_avg |   -.758188   .1119729    -6.77   0.000    -.9776594   -.5387165
+                        coll |  -2.301101   .1822186   -12.63   0.000    -2.658257   -1.943945
+                    insurcov |  -2.823823   .2065129   -13.67   0.000    -3.228597   -2.419049
+                         pov |   .3404114   .1894155     1.80   0.072    -.0308508    .7116737
+                      pop_65 |     .00015   .0000679     2.21   0.027     .0000168    .0002832
+                             |
+                        year |
+                       2010  |  -27.28204   1.493259   -18.27   0.000    -30.20889   -24.35519
+                       2011  |  -59.59471   1.587562   -37.54   0.000     -62.7064   -56.48302
+                       2012  |  -60.32922   1.911969   -31.55   0.000    -64.07675   -56.58168
+                       2013  |  -67.60098   1.605512   -42.11   0.000    -70.74785   -64.45411
+                       2014  |   -94.1373   1.857476   -50.68   0.000    -97.77803   -90.49657
+                       2015  |  -66.43287   2.234289   -29.73   0.000    -70.81217   -62.05358
+                       2016  |   -96.3952    2.60185   -37.05   0.000    -101.4949   -91.29547
+                       2017  |  -94.44769   2.489321   -37.94   0.000    -99.32686   -89.56852
+                       2018  |  -123.5647   2.461241   -50.20   0.000    -128.3888   -118.7406
+                       2019  |  -156.1745   2.525471   -61.84   0.000    -161.1245   -151.2245
+                             |
+                       _cons |   2569.876   21.85764   117.57   0.000     2527.034    2612.718
+-----------------------------+----------------------------------------------------------------
+                     sigma_u |  355.53126
+                     sigma_e |  56.064473
+                         rho |  .97573655   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------------------
+F test that all u_i=0: F(3075, 30735) = 299.86               Prob > F = 0.0000
+
+. 
+. ** test for direction of change
+. ** for each line, you can tell whether the slope is positive, flat, or negative
+. ** and whether that slope is statistically different from 0
+. margins, dydx(tmean) at(tmean=(0 15 25) pm25=(5 10 15) metro=(0 1))
+
+Average marginal effects                        Number of obs     =     33,830
+Model VCE    : Conventional
+
+Expression   : Linear prediction, predict()
+dy/dx w.r.t. : tmean
+
+1._at        : tmean           =           0
+               pm25            =           5
+               metro           =           0
+
+2._at        : tmean           =           0
+               pm25            =           5
+               metro           =           1
+
+3._at        : tmean           =           0
+               pm25            =          10
+               metro           =           0
+
+4._at        : tmean           =           0
+               pm25            =          10
+               metro           =           1
+
+5._at        : tmean           =           0
+               pm25            =          15
+               metro           =           0
+
+6._at        : tmean           =           0
+               pm25            =          15
+               metro           =           1
+
+7._at        : tmean           =          15
+               pm25            =           5
+               metro           =           0
+
+8._at        : tmean           =          15
+               pm25            =           5
+               metro           =           1
+
+9._at        : tmean           =          15
+               pm25            =          10
+               metro           =           0
+
+10._at       : tmean           =          15
+               pm25            =          10
+               metro           =           1
+
+11._at       : tmean           =          15
+               pm25            =          15
+               metro           =           0
+
+12._at       : tmean           =          15
+               pm25            =          15
+               metro           =           1
+
+13._at       : tmean           =          25
+               pm25            =           5
+               metro           =           0
+
+14._at       : tmean           =          25
+               pm25            =           5
+               metro           =           1
+
+15._at       : tmean           =          25
+               pm25            =          10
+               metro           =           0
+
+16._at       : tmean           =          25
+               pm25            =          10
+               metro           =           1
+
+17._at       : tmean           =          25
+               pm25            =          15
+               metro           =           0
+
+18._at       : tmean           =          25
+               pm25            =          15
+               metro           =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+tmean        |
+         _at |
+          1  |  -10.80662   .7267711   -14.87   0.000    -12.23107   -9.382178
+          2  |  -10.80662   .7267711   -14.87   0.000    -12.23107   -9.382178
+          3  |  -10.80662   .7267711   -14.87   0.000    -12.23107   -9.382178
+          4  |  -10.80662   .7267711   -14.87   0.000    -12.23107   -9.382178
+          5  |  -10.80662   .7267711   -14.87   0.000    -12.23107   -9.382178
+          6  |  -10.80662   .7267711   -14.87   0.000    -12.23107   -9.382178
+          7  |  -2.086178   .6579562    -3.17   0.002    -3.375748   -.7966072
+          8  |  -4.605506    .693845    -6.64   0.000    -5.965417   -3.245595
+          9  |   6.634267   .9164609     7.24   0.000     4.838037    8.430498
+         10  |   1.595611   .9777366     1.63   0.103    -.3207179    3.511939
+         11  |   15.35471   1.322565    11.61   0.000     12.76253    17.94689
+         12  |   7.796727   1.397083     5.58   0.000     5.058496    10.53496
+         13  |   3.727452   .8052493     4.63   0.000     2.149193    5.305712
+         14  |  -.4714283   .8601519    -0.55   0.584    -2.157295    1.214439
+         15  |   18.26153   1.471017    12.41   0.000     15.37839    21.14467
+         16  |   9.863766   1.549079     6.37   0.000     6.827627    12.89991
+         17  |    32.7956   2.252684    14.56   0.000     28.38042    37.21078
+         18  |   20.19896   2.346818     8.61   0.000     15.59928    24.79864
+------------------------------------------------------------------------------
+
+. 
+. ** wald test whether all coefficients in the interaction term are 0
+. testparm c.tmean#c.tmean#c.pm25#i.metro
+
+ ( 1)  0b.metro#c.tmean#c.tmean#c.pm25 = 0
+ ( 2)  1.metro#c.tmean#c.tmean#c.pm25 = 0
+
+       F(  2, 30735) =  152.57
+            Prob > F =    0.0000
+
+. 
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |     33,830  -195829.4  -182596.3      20   365232.7   365401.3
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] BIC note.
+
+. matrix ics = r(S)
+
+. local ll = ics[1, 3]
+
+. local aic = ics[1, 5]
+
+. local bic = ics[1, 6]
+
+. outreg2 using "$results/table_2.doc", append stats(coef) label nodepvar dec(3) ///
+>         ctitle("cv_65") alpha(0.001, 0.01, 0.05) symbol(***, **, *) drop(i.cfips) noomit ///
+>     addstat("AIC", `aic', "BIC", `bic')
+results/table_2.doc
+dir : seeout
+
+. 
+. *==========================================================
+. * cr
+. *==========================================================
+. ** 0_1
+. use "$data/resdata_final_age_0_1_cr.dta", clear
+
+. merge 1:1 countyfips year using "$data/county_poverty_2009_2019.dta", gen(mg)
+(note: variable year was int, now float to accommodate using data's values)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            72
+        from master                        72  (mg==1)
+        from using                          0  (mg==2)
+
+    matched                            34,193  (mg==3)
+    -----------------------------------------
+
+. tab mg, mi
+
+                     mg |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+        master only (1) |         72        0.21        0.21
+            matched (3) |     34,193       99.79      100.00
+------------------------+-----------------------------------
+                  Total |     34,265      100.00
+
+. label define newmetro 0 "Nonmetropolitan county" 1 "Metropolitan county"
+
+. label values metro newmetro
+
+. xtset cfips year
+       panel variable:  cfips (strongly balanced)
+        time variable:  year, 2009 to 2019
+                delta:  1 unit
+
+. xtreg rate tmean pm25 ///
+>         c.tmean#c.tmean#c.pm25#i.metro ///
+>         inc_avg coll insurcov pov pop_0_1 i.year, fe
+
+Fixed-effects (within) regression               Number of obs     =     33,830
+Group variable: cfips                           Number of groups  =      3,076
+
+R-sq:                                           Obs per group:
+     within  = 0.3650                                         min =          6
+     between = 0.0526                                         avg =       11.0
+     overall = 0.0410                                         max =         11
+
+                                                F(19,30735)       =     929.96
+corr(u_i, Xb)  = 0.0884                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------------------
+                        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------------+----------------------------------------------------------------
+                       tmean |   .0028444   .0010579     2.69   0.007     .0007709    .0049178
+                        pm25 |  -.0058949    .001089    -5.41   0.000    -.0080294   -.0037603
+                             |
+metro#c.tmean#c.tmean#c.pm25 |
+     Nonmetropolitan county  |  -.0000269   4.86e-06    -5.54   0.000    -.0000365   -.0000174
+        Metropolitan county  |  -.0000184   4.94e-06    -3.73   0.000    -.0000281   -8.75e-06
+                             |
+                     inc_avg |  -.0004513   .0001628    -2.77   0.006    -.0007705   -.0001322
+                        coll |  -.0038475   .0002649   -14.52   0.000    -.0043667   -.0033283
+                    insurcov |   -.000268   .0003005    -0.89   0.372     -.000857    .0003209
+                         pov |  -.0016389   .0002757    -5.95   0.000    -.0021793   -.0010986
+                     pop_0_1 |   3.09e-06   2.55e-06     1.21   0.225    -1.91e-06    8.09e-06
+                             |
+                        year |
+                       2010  |   .0051289   .0021746     2.36   0.018     .0008665    .0093913
+                       2011  |   .0684419   .0023112    29.61   0.000     .0639119    .0729719
+                       2012  |   .0798537   .0027827    28.70   0.000     .0743995    .0853079
+                       2013  |   .0904231    .002328    38.84   0.000     .0858601     .094986
+                       2014  |   .0828564   .0026936    30.76   0.000     .0775769     .088136
+                       2015  |   .0797374   .0032445    24.58   0.000     .0733781    .0860967
+                       2016  |   .0757899   .0037772    20.06   0.000     .0683864    .0831934
+                       2017  |  -.0047052    .003609    -1.30   0.192    -.0117789    .0023686
+                       2018  |  -.0645359   .0035615   -18.12   0.000    -.0715166   -.0575552
+                       2019  |  -.0700482   .0036473   -19.21   0.000     -.077197   -.0628993
+                             |
+                       _cons |   2.303417   .0320222    71.93   0.000     2.240652    2.366182
+-----------------------------+----------------------------------------------------------------
+                     sigma_u |  .57800233
+                     sigma_e |  .08162232
+                         rho |  .98044835   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------------------
+F test that all u_i=0: F(3075, 30735) = 341.56               Prob > F = 0.0000
+
+. 
+. ** test for direction of change
+. ** for each line, you can tell whether the slope is positive, flat, or negative
+. ** and whether that slope is statistically different from 0
+. margins, dydx(tmean) at(tmean=(0 15 25) pm25=(5 10 15) metro=(0 1))
+
+Average marginal effects                        Number of obs     =     33,830
+Model VCE    : Conventional
+
+Expression   : Linear prediction, predict()
+dy/dx w.r.t. : tmean
+
+1._at        : tmean           =           0
+               pm25            =           5
+               metro           =           0
+
+2._at        : tmean           =           0
+               pm25            =           5
+               metro           =           1
+
+3._at        : tmean           =           0
+               pm25            =          10
+               metro           =           0
+
+4._at        : tmean           =           0
+               pm25            =          10
+               metro           =           1
+
+5._at        : tmean           =           0
+               pm25            =          15
+               metro           =           0
+
+6._at        : tmean           =           0
+               pm25            =          15
+               metro           =           1
+
+7._at        : tmean           =          15
+               pm25            =           5
+               metro           =           0
+
+8._at        : tmean           =          15
+               pm25            =           5
+               metro           =           1
+
+9._at        : tmean           =          15
+               pm25            =          10
+               metro           =           0
+
+10._at       : tmean           =          15
+               pm25            =          10
+               metro           =           1
+
+11._at       : tmean           =          15
+               pm25            =          15
+               metro           =           0
+
+12._at       : tmean           =          15
+               pm25            =          15
+               metro           =           1
+
+13._at       : tmean           =          25
+               pm25            =           5
+               metro           =           0
+
+14._at       : tmean           =          25
+               pm25            =           5
+               metro           =           1
+
+15._at       : tmean           =          25
+               pm25            =          10
+               metro           =           0
+
+16._at       : tmean           =          25
+               pm25            =          10
+               metro           =           1
+
+17._at       : tmean           =          25
+               pm25            =          15
+               metro           =           0
+
+18._at       : tmean           =          25
+               pm25            =          15
+               metro           =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+tmean        |
+         _at |
+          1  |   .0028444   .0010579     2.69   0.007      .000771    .0049177
+          2  |   .0028444   .0010579     2.69   0.007      .000771    .0049177
+          3  |   .0028444   .0010579     2.69   0.007      .000771    .0049177
+          4  |   .0028444   .0010579     2.69   0.007      .000771    .0049177
+          5  |   .0028444   .0010579     2.69   0.007      .000771    .0049177
+          6  |   .0028444   .0010579     2.69   0.007      .000771    .0049177
+          7  |  -.0011953    .000956    -1.25   0.211     -.003069    .0006785
+          8  |    .000078     .00101     0.08   0.938    -.0019015    .0020575
+          9  |  -.0052349    .001331    -3.93   0.000    -.0078436   -.0026261
+         10  |  -.0026883   .0014216    -1.89   0.059    -.0054745    .0000979
+         11  |  -.0092745   .0019215    -4.83   0.000    -.0130406   -.0055085
+         12  |  -.0054547   .0020302    -2.69   0.007    -.0094337   -.0014756
+         13  |  -.0038883   .0011695    -3.32   0.001    -.0061804   -.0015962
+         14  |  -.0017662    .001251    -1.41   0.158    -.0042181    .0006857
+         15  |  -.0106211   .0021374    -4.97   0.000    -.0148103   -.0064319
+         16  |  -.0063768   .0022508    -2.83   0.005    -.0107883   -.0019652
+         17  |  -.0173538   .0032744    -5.30   0.000    -.0237714   -.0109362
+         18  |  -.0109874   .0034092    -3.22   0.001    -.0176693   -.0043055
+------------------------------------------------------------------------------
+
+. 
+. ** wald test whether all coefficients in the interaction term are 0
+. testparm c.tmean#c.tmean#c.pm25#i.metro
+
+ ( 1)  0b.metro#c.tmean#c.tmean#c.pm25 = 0
+ ( 2)  1.metro#c.tmean#c.tmean#c.pm25 = 0
+
+       F(  2, 30735) =   15.39
+            Prob > F =    0.0000
+
+. 
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |     33,830   30703.88   38386.46      20  -76732.92  -76564.33
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] BIC note.
+
+. matrix ics = r(S)
+
+. local ll = ics[1, 3]
+
+. local aic = ics[1, 5]
+
+. local bic = ics[1, 6]
+
+. outreg2 using "$results/table_2.doc", append stats(coef) label nodepvar dec(3) ///
+>         ctitle("cr_0_1") alpha(0.001, 0.01, 0.05) symbol(***, **, *) drop(i.cfips) noomit ///
+>     addstat("AIC", `aic', "BIC", `bic')
+results/table_2.doc
+dir : seeout
+
+. 
+. ** 1_14
+. use "$data/resdata_final_age_1_14_cr.dta", clear
+
+. merge 1:1 countyfips year using "$data/county_poverty_2009_2019.dta", gen(mg)
+(note: variable year was int, now float to accommodate using data's values)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            72
+        from master                        72  (mg==1)
+        from using                          0  (mg==2)
+
+    matched                            34,193  (mg==3)
+    -----------------------------------------
+
+. tab mg, mi
+
+                     mg |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+        master only (1) |         72        0.21        0.21
+            matched (3) |     34,193       99.79      100.00
+------------------------+-----------------------------------
+                  Total |     34,265      100.00
+
+. label define newmetro 0 "Nonmetropolitan county" 1 "Metropolitan county"
+
+. label values metro newmetro
+
+. xtset cfips year
+       panel variable:  cfips (strongly balanced)
+        time variable:  year, 2009 to 2019
+                delta:  1 unit
+
+. xtreg rate tmean pm25 ///
+>         c.tmean#c.tmean#c.pm25#i.metro ///
+>         inc_avg coll insurcov pov pop_1_14 i.year, fe
+
+Fixed-effects (within) regression               Number of obs     =     33,830
+Group variable: cfips                           Number of groups  =      3,076
+
+R-sq:                                           Obs per group:
+     within  = 0.4470                                         min =          6
+     between = 0.0162                                         avg =       11.0
+     overall = 0.0243                                         max =         11
+
+                                                F(19,30735)       =    1307.56
+corr(u_i, Xb)  = -0.0019                        Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------------------
+                        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------------+----------------------------------------------------------------
+                       tmean |   .0009431   .0002527     3.73   0.000     .0004479    .0014383
+                        pm25 |  -.0070763   .0002605   -27.16   0.000    -.0075869   -.0065657
+                             |
+metro#c.tmean#c.tmean#c.pm25 |
+     Nonmetropolitan county  |  -2.68e-06   1.16e-06    -2.31   0.021    -4.95e-06   -4.04e-07
+        Metropolitan county  |   4.21e-06   1.18e-06     3.56   0.000     1.89e-06    6.52e-06
+                             |
+                     inc_avg |  -.0004841   .0000389   -12.45   0.000    -.0005603   -.0004078
+                        coll |  -.0007517   .0000632   -11.90   0.000    -.0008756   -.0006279
+                    insurcov |  -.0000245   .0000716    -0.34   0.732     -.000165    .0001159
+                         pov |  -.0000582   .0000658    -0.89   0.376    -.0001871    .0000706
+                    pop_1_14 |  -2.46e-07   6.17e-08    -3.98   0.000    -3.67e-07   -1.25e-07
+                             |
+                        year |
+                       2010  |  -.0035074   .0005186    -6.76   0.000    -.0045238    -.002491
+                       2011  |   .0128525   .0005512    23.32   0.000     .0117721     .013933
+                       2012  |   .0098349   .0006636    14.82   0.000     .0085342    .0111356
+                       2013  |   .0233092   .0005552    41.98   0.000     .0222209    .0243974
+                       2014  |   .0288682   .0006426    44.92   0.000     .0276086    .0301277
+                       2015  |   .0363252    .000774    46.93   0.000     .0348082    .0378421
+                       2016  |   .0388236   .0009011    43.08   0.000     .0370574    .0405899
+                       2017  |   .0251293   .0008609    29.19   0.000     .0234419    .0268167
+                       2018  |   .0112529   .0008492    13.25   0.000     .0095884    .0129175
+                       2019  |   .0133897   .0008695    15.40   0.000     .0116854    .0150939
+                             |
+                       _cons |   .6487391   .0076406    84.91   0.000     .6337632    .6637151
+-----------------------------+----------------------------------------------------------------
+                     sigma_u |  .17817614
+                     sigma_e |  .01946985
+                         rho |  .98820029   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------------------
+F test that all u_i=0: F(3075, 30735) = 594.72               Prob > F = 0.0000
+
+. 
+. ** test for direction of change
+. ** for each line, you can tell whether the slope is positive, flat, or negative
+. ** and whether that slope is statistically different from 0
+. margins, dydx(tmean) at(tmean=(0 15 25) pm25=(5 10 15) metro=(0 1))
+
+Average marginal effects                        Number of obs     =     33,830
+Model VCE    : Conventional
+
+Expression   : Linear prediction, predict()
+dy/dx w.r.t. : tmean
+
+1._at        : tmean           =           0
+               pm25            =           5
+               metro           =           0
+
+2._at        : tmean           =           0
+               pm25            =           5
+               metro           =           1
+
+3._at        : tmean           =           0
+               pm25            =          10
+               metro           =           0
+
+4._at        : tmean           =           0
+               pm25            =          10
+               metro           =           1
+
+5._at        : tmean           =           0
+               pm25            =          15
+               metro           =           0
+
+6._at        : tmean           =           0
+               pm25            =          15
+               metro           =           1
+
+7._at        : tmean           =          15
+               pm25            =           5
+               metro           =           0
+
+8._at        : tmean           =          15
+               pm25            =           5
+               metro           =           1
+
+9._at        : tmean           =          15
+               pm25            =          10
+               metro           =           0
+
+10._at       : tmean           =          15
+               pm25            =          10
+               metro           =           1
+
+11._at       : tmean           =          15
+               pm25            =          15
+               metro           =           0
+
+12._at       : tmean           =          15
+               pm25            =          15
+               metro           =           1
+
+13._at       : tmean           =          25
+               pm25            =           5
+               metro           =           0
+
+14._at       : tmean           =          25
+               pm25            =           5
+               metro           =           1
+
+15._at       : tmean           =          25
+               pm25            =          10
+               metro           =           0
+
+16._at       : tmean           =          25
+               pm25            =          10
+               metro           =           1
+
+17._at       : tmean           =          25
+               pm25            =          15
+               metro           =           0
+
+18._at       : tmean           =          25
+               pm25            =          15
+               metro           =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+tmean        |
+         _at |
+          1  |   .0009431   .0002527     3.73   0.000     .0004479    .0014383
+          2  |   .0009431   .0002527     3.73   0.000     .0004479    .0014383
+          3  |   .0009431   .0002527     3.73   0.000     .0004479    .0014383
+          4  |   .0009431   .0002527     3.73   0.000     .0004479    .0014383
+          5  |   .0009431   .0002527     3.73   0.000     .0004479    .0014383
+          6  |   .0009431   .0002527     3.73   0.000     .0004479    .0014383
+          7  |   .0005412   .0002281     2.37   0.018     .0000942    .0009882
+          8  |   .0015739   .0002409     6.53   0.000     .0011017     .002046
+          9  |   .0001393   .0003175     0.44   0.661     -.000483    .0007616
+         10  |   .0022046   .0003393     6.50   0.000     .0015396    .0028697
+         11  |  -.0002626   .0004585    -0.57   0.567    -.0011612    .0006361
+         12  |   .0028354   .0004849     5.85   0.000     .0018849    .0037859
+         13  |   .0002733    .000279     0.98   0.327    -.0002735      .00082
+         14  |   .0019944   .0002985     6.68   0.000     .0014093    .0025795
+         15  |  -.0003965   .0005101    -0.78   0.437    -.0013962    .0006032
+         16  |   .0030457   .0005377     5.66   0.000     .0019917    .0040996
+         17  |  -.0010664   .0007816    -1.36   0.172    -.0025983    .0004655
+         18  |   .0040969   .0008148     5.03   0.000     .0024999     .005694
+------------------------------------------------------------------------------
+
+. 
+. ** wald test whether all coefficients in the interaction term are 0
+. testparm c.tmean#c.tmean#c.pm25#i.metro
+
+ ( 1)  0b.metro#c.tmean#c.tmean#c.pm25 = 0
+ ( 2)  1.metro#c.tmean#c.tmean#c.pm25 = 0
+
+       F(  2, 30735) =   23.88
+            Prob > F =    0.0000
+
+. 
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |     33,830   76852.42   86872.82      20  -173705.6  -173537.1
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] BIC note.
+
+. matrix ics = r(S)
+
+. local ll = ics[1, 3]
+
+. local aic = ics[1, 5]
+
+. local bic = ics[1, 6]
+
+. outreg2 using "$results/table_2.doc", append stats(coef) label nodepvar dec(3) ///
+>         ctitle("cr_1_14") alpha(0.001, 0.01, 0.05) symbol(***, **, *) drop(i.cfips) noomit ///
+>     addstat("AIC", `aic', "BIC", `bic')
+results/table_2.doc
+dir : seeout
+
+. 
+. ** 15_64
+. use "$data/resdata_final_age_15_64_cr.dta", clear
+
+. merge 1:1 countyfips year using "$data/county_poverty_2009_2019.dta", gen(mg)
+(note: variable year was int, now float to accommodate using data's values)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            72
+        from master                        72  (mg==1)
+        from using                          0  (mg==2)
+
+    matched                            34,193  (mg==3)
+    -----------------------------------------
+
+. tab mg, mi
+
+                     mg |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+        master only (1) |         72        0.21        0.21
+            matched (3) |     34,193       99.79      100.00
+------------------------+-----------------------------------
+                  Total |     34,265      100.00
+
+. label define newmetro 0 "Nonmetropolitan county" 1 "Metropolitan county"
+
+. label values metro newmetro
+
+. xtset cfips year
+       panel variable:  cfips (strongly balanced)
+        time variable:  year, 2009 to 2019
+                delta:  1 unit
+
+. xtreg rate tmean pm25 ///
+>         c.tmean#c.tmean#c.pm25#i.metro ///
+>         inc_avg coll insurcov pov pop_15_64 i.year, fe
+
+Fixed-effects (within) regression               Number of obs     =     33,830
+Group variable: cfips                           Number of groups  =      3,076
+
+R-sq:                                           Obs per group:
+     within  = 0.5727                                         min =          6
+     between = 0.0287                                         avg =       11.0
+     overall = 0.0373                                         max =         11
+
+                                                F(19,30735)       =    2168.42
+corr(u_i, Xb)  = -0.3450                        Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------------------
+                        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------------+----------------------------------------------------------------
+                       tmean |   .3356286   .0122235    27.46   0.000     .3116701    .3595872
+                        pm25 |  -.3263554   .0126121   -25.88   0.000    -.3510756   -.3016353
+                             |
+metro#c.tmean#c.tmean#c.pm25 |
+     Nonmetropolitan county  |  -.0020031   .0000561   -35.71   0.000     -.002113   -.0018931
+        Metropolitan county  |  -.0002394   .0000573    -4.18   0.000    -.0003516   -.0001271
+                             |
+                     inc_avg |  -.0393871   .0018831   -20.92   0.000     -.043078   -.0356961
+                        coll |   -.007421   .0030596    -2.43   0.015    -.0134178   -.0014241
+                    insurcov |   .0914699   .0034664    26.39   0.000     .0846756    .0982642
+                         pov |   .0002203   .0031814     0.07   0.945    -.0060154    .0064561
+                   pop_15_64 |  -.0000189   7.90e-07   -23.94   0.000    -.0000205   -.0000174
+                             |
+                        year |
+                       2010  |  -.2122861   .0250878    -8.46   0.000    -.2614592    -.163113
+                       2011  |   .0414221   .0266813     1.55   0.121    -.0108744    .0937185
+                       2012  |  -.2567624   .0321229    -7.99   0.000    -.3197246   -.1938001
+                       2013  |   .3349593   .0269176    12.44   0.000     .2821997    .3877188
+                       2014  |   .2301674   .0311466     7.39   0.000     .1691189     .291216
+                       2015  |   .2135383   .0374927     5.70   0.000     .1400511    .2870254
+                       2016  |   .1512947   .0436571     3.47   0.001      .065725    .2368643
+                       2017  |   .7633122   .0417118    18.30   0.000     .6815554    .8450691
+                       2018  |   .8678826   .0411581    21.09   0.000      .787211    .9485543
+                       2019  |   .7710684   .0421559    18.29   0.000     .6884411    .8536958
+                             |
+                       _cons |   14.62528   .3686421    39.67   0.000     13.90273    15.34784
+-----------------------------+----------------------------------------------------------------
+                     sigma_u |  8.2269419
+                     sigma_e |  .94191834
+                         rho |  .98706121   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------------------
+F test that all u_i=0: F(3075, 30735) = 330.24               Prob > F = 0.0000
+
+. 
+. ** test for direction of change
+. ** for each line, you can tell whether the slope is positive, flat, or negative
+. ** and whether that slope is statistically different from 0
+. margins, dydx(tmean) at(tmean=(0 15 25) pm25=(5 10 15) metro=(0 1))
+
+Average marginal effects                        Number of obs     =     33,830
+Model VCE    : Conventional
+
+Expression   : Linear prediction, predict()
+dy/dx w.r.t. : tmean
+
+1._at        : tmean           =           0
+               pm25            =           5
+               metro           =           0
+
+2._at        : tmean           =           0
+               pm25            =           5
+               metro           =           1
+
+3._at        : tmean           =           0
+               pm25            =          10
+               metro           =           0
+
+4._at        : tmean           =           0
+               pm25            =          10
+               metro           =           1
+
+5._at        : tmean           =           0
+               pm25            =          15
+               metro           =           0
+
+6._at        : tmean           =           0
+               pm25            =          15
+               metro           =           1
+
+7._at        : tmean           =          15
+               pm25            =           5
+               metro           =           0
+
+8._at        : tmean           =          15
+               pm25            =           5
+               metro           =           1
+
+9._at        : tmean           =          15
+               pm25            =          10
+               metro           =           0
+
+10._at       : tmean           =          15
+               pm25            =          10
+               metro           =           1
+
+11._at       : tmean           =          15
+               pm25            =          15
+               metro           =           0
+
+12._at       : tmean           =          15
+               pm25            =          15
+               metro           =           1
+
+13._at       : tmean           =          25
+               pm25            =           5
+               metro           =           0
+
+14._at       : tmean           =          25
+               pm25            =           5
+               metro           =           1
+
+15._at       : tmean           =          25
+               pm25            =          10
+               metro           =           0
+
+16._at       : tmean           =          25
+               pm25            =          10
+               metro           =           1
+
+17._at       : tmean           =          25
+               pm25            =          15
+               metro           =           0
+
+18._at       : tmean           =          25
+               pm25            =          15
+               metro           =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+tmean        |
+         _at |
+          1  |   .3356286   .0122235    27.46   0.000      .311671    .3595862
+          2  |   .3356286   .0122235    27.46   0.000      .311671    .3595862
+          3  |   .3356286   .0122235    27.46   0.000      .311671    .3595862
+          4  |   .3356286   .0122235    27.46   0.000      .311671    .3595862
+          5  |   .3356286   .0122235    27.46   0.000      .311671    .3595862
+          6  |   .3356286   .0122235    27.46   0.000      .311671    .3595862
+          7  |   .0351672   .0110409     3.19   0.001     .0135274     .056807
+          8  |   .2997246   .0116542    25.72   0.000     .2768829    .3225664
+          9  |  -.2652942   .0153607   -17.27   0.000    -.2954006   -.2351879
+         10  |   .2638206   .0164259    16.06   0.000     .2316265    .2960147
+         11  |  -.5657556   .0221711   -25.52   0.000    -.6092102   -.5223011
+         12  |   .2279166   .0234815     9.71   0.000     .1818937    .2739395
+         13  |  -.1651404   .0134983   -12.23   0.000    -.1915967   -.1386842
+         14  |   .2757886   .0144481    19.09   0.000     .2474709    .3041064
+         15  |  -.6659095   .0246621   -27.00   0.000    -.7142462   -.6175727
+         16  |   .2159486   .0260391     8.29   0.000     .1649129    .2669843
+         17  |  -1.166678   .0377817   -30.88   0.000    -1.240729   -1.092628
+         18  |   .1561086   .0394624     3.96   0.000     .0787638    .2334534
+------------------------------------------------------------------------------
+
+. 
+. ** wald test whether all coefficients in the interaction term are 0
+. testparm c.tmean#c.tmean#c.pm25#i.metro
+
+ ( 1)  0b.metro#c.tmean#c.tmean#c.pm25 = 0
+ ( 2)  1.metro#c.tmean#c.tmean#c.pm25 = 0
+
+       F(  2, 30735) =  923.73
+            Prob > F =    0.0000
+
+. 
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |     33,830  -58739.35  -44355.49      20   88750.98   88919.56
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] BIC note.
+
+. matrix ics = r(S)
+
+. local ll = ics[1, 3]
+
+. local aic = ics[1, 5]
+
+. local bic = ics[1, 6]
+
+. outreg2 using "$results/table_2.doc", append stats(coef) label nodepvar dec(3) ///
+>         ctitle("cr_15_64") alpha(0.001, 0.01, 0.05) symbol(***, **, *) drop(i.cfips) noomit ///
+>     addstat("AIC", `aic', "BIC", `bic')
+results/table_2.doc
+dir : seeout
+
+. 
+. ** 65
+. use "$data/resdata_final_age_65_cr.dta", clear
+
+. merge 1:1 countyfips year using "$data/county_poverty_2009_2019.dta", gen(mg)
+(note: variable year was int, now float to accommodate using data's values)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                            72
+        from master                        72  (mg==1)
+        from using                          0  (mg==2)
+
+    matched                            34,193  (mg==3)
+    -----------------------------------------
+
+. tab mg, mi
+
+                     mg |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+        master only (1) |         72        0.21        0.21
+            matched (3) |     34,193       99.79      100.00
+------------------------+-----------------------------------
+                  Total |     34,265      100.00
+
+. label define newmetro 0 "Nonmetropolitan county" 1 "Metropolitan county"
+
+. label values metro newmetro
+
+. xtset cfips year
+       panel variable:  cfips (strongly balanced)
+        time variable:  year, 2009 to 2019
+                delta:  1 unit
+
+. xtreg rate tmean pm25 ///
+>         c.tmean#c.tmean#c.pm25#i.metro ///
+>         inc_avg coll insurcov pov pop_65 i.year, fe
+
+Fixed-effects (within) regression               Number of obs     =     33,830
+Group variable: cfips                           Number of groups  =      3,076
+
+R-sq:                                           Obs per group:
+     within  = 0.3394                                         min =          6
+     between = 0.1143                                         avg =       11.0
+     overall = 0.1166                                         max =         11
+
+                                                F(19,30735)       =     831.19
+corr(u_i, Xb)  = 0.1296                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------------------
+                        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-----------------------------+----------------------------------------------------------------
+                       tmean |   2.907332   .2314887    12.56   0.000     2.453605     3.36106
+                        pm25 |  -3.348593   .2383714   -14.05   0.000    -3.815811   -2.881375
+                             |
+metro#c.tmean#c.tmean#c.pm25 |
+     Nonmetropolitan county  |   -.026996   .0010641   -25.37   0.000    -.0290817   -.0249102
+        Metropolitan county  |   -.010742   .0010841    -9.91   0.000    -.0128669   -.0086171
+                             |
+                     inc_avg |   -.397815   .0356652   -11.15   0.000    -.4677203   -.3279097
+                        coll |  -.6030896   .0580397   -10.39   0.000    -.7168497   -.4893295
+                    insurcov |  -.2355491   .0657778    -3.58   0.000    -.3644763    -.106622
+                         pov |   .0704304    .060332     1.17   0.243    -.0478228    .1886836
+                      pop_65 |  -.0004968   .0000216   -22.96   0.000    -.0005392   -.0004544
+                             |
+                        year |
+                       2010  |   8.279367   .4756278    17.41   0.000     7.347117    9.211617
+                       2011  |   23.13834   .5056649    45.76   0.000     22.14721    24.12946
+                       2012  |   18.57653   .6089938    30.50   0.000     17.38287    19.77018
+                       2013  |    25.5605   .5113823    49.98   0.000     24.55817    26.56283
+                       2014  |   13.53667    .591637    22.88   0.000     12.37704    14.69631
+                       2015  |   29.90434    .711658    42.02   0.000     28.50947    31.29922
+                       2016  |   18.82046   .8287324    22.71   0.000     17.19611    20.44481
+                       2017  |   35.35037     .79289    44.58   0.000     33.79627    36.90446
+                       2018  |   27.44784   .7839463    35.01   0.000     25.91128    28.98441
+                       2019  |   12.70734   .8044046    15.80   0.000     11.13067      14.284
+                             |
+                       _cons |   594.5222   6.962022    85.40   0.000     580.8763     608.168
+-----------------------------+----------------------------------------------------------------
+                     sigma_u |  125.31001
+                     sigma_e |  17.857466
+                         rho |  .98009616   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------------------
+F test that all u_i=0: F(3075, 30735) = 378.68               Prob > F = 0.0000
+
+. 
+. ** test for direction of change
+. ** for each line, you can tell whether the slope is positive, flat, or negative
+. ** and whether that slope is statistically different from 0
+. margins, dydx(tmean) at(tmean=(0 15 25) pm25=(5 10 15) metro=(0 1))
+
+Average marginal effects                        Number of obs     =     33,830
+Model VCE    : Conventional
+
+Expression   : Linear prediction, predict()
+dy/dx w.r.t. : tmean
+
+1._at        : tmean           =           0
+               pm25            =           5
+               metro           =           0
+
+2._at        : tmean           =           0
+               pm25            =           5
+               metro           =           1
+
+3._at        : tmean           =           0
+               pm25            =          10
+               metro           =           0
+
+4._at        : tmean           =           0
+               pm25            =          10
+               metro           =           1
+
+5._at        : tmean           =           0
+               pm25            =          15
+               metro           =           0
+
+6._at        : tmean           =           0
+               pm25            =          15
+               metro           =           1
+
+7._at        : tmean           =          15
+               pm25            =           5
+               metro           =           0
+
+8._at        : tmean           =          15
+               pm25            =           5
+               metro           =           1
+
+9._at        : tmean           =          15
+               pm25            =          10
+               metro           =           0
+
+10._at       : tmean           =          15
+               pm25            =          10
+               metro           =           1
+
+11._at       : tmean           =          15
+               pm25            =          15
+               metro           =           0
+
+12._at       : tmean           =          15
+               pm25            =          15
+               metro           =           1
+
+13._at       : tmean           =          25
+               pm25            =           5
+               metro           =           0
+
+14._at       : tmean           =          25
+               pm25            =           5
+               metro           =           1
+
+15._at       : tmean           =          25
+               pm25            =          10
+               metro           =           0
+
+16._at       : tmean           =          25
+               pm25            =          10
+               metro           =           1
+
+17._at       : tmean           =          25
+               pm25            =          15
+               metro           =           0
+
+18._at       : tmean           =          25
+               pm25            =          15
+               metro           =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+tmean        |
+         _at |
+          1  |   2.907332   .2314887    12.56   0.000     2.453623    3.361042
+          2  |   2.907332   .2314887    12.56   0.000     2.453623    3.361042
+          3  |   2.907332   .2314887    12.56   0.000     2.453623    3.361042
+          4  |   2.907332   .2314887    12.56   0.000     2.453623    3.361042
+          5  |   2.907332   .2314887    12.56   0.000     2.453623    3.361042
+          6  |   2.907332   .2314887    12.56   0.000     2.453623    3.361042
+          7  |  -1.142064     .20957    -5.45   0.000    -1.552813   -.7313142
+          8  |   1.296035   .2210012     5.86   0.000     .8628806    1.729189
+          9  |   -5.19146    .291908   -17.78   0.000    -5.763589   -4.619331
+         10  |  -.3152626   .3114254    -1.01   0.311     -.925645    .2951199
+         11  |  -9.240856    .421259   -21.94   0.000    -10.06651   -8.415204
+         12  |   -1.92656   .4449941    -4.33   0.000    -2.798732   -1.054388
+         13  |  -3.841661   .2564853   -14.98   0.000    -4.344363   -3.338959
+         14  |   .2218366   .2739727     0.81   0.418      -.31514    .7588132
+         15  |  -10.59066   .4685432   -22.60   0.000    -11.50898   -9.672327
+         16  |  -2.463659   .4934075    -4.99   0.000     -3.43072   -1.496598
+         17  |  -17.33965   .7175174   -24.17   0.000    -18.74596   -15.93334
+         18  |  -5.149155   .7475004    -6.89   0.000    -6.614229   -3.684081
+------------------------------------------------------------------------------
+
+. 
+. ** wald test whether all coefficients in the interaction term are 0
+. testparm c.tmean#c.tmean#c.pm25#i.metro
+
+ ( 1)  0b.metro#c.tmean#c.tmean#c.pm25 = 0
+ ( 2)  1.metro#c.tmean#c.tmean#c.pm25 = 0
+
+       F(  2, 30735) =  352.29
+            Prob > F =    0.0000
+
+. 
+. estat ic
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |          N   ll(null)  ll(model)      df        AIC        BIC
+-------------+---------------------------------------------------------------
+           . |     33,830  -150905.8  -143892.1      20   287824.2   287992.8
+-----------------------------------------------------------------------------
+Note: BIC uses N = number of observations. See [R] BIC note.
+
+. matrix ics = r(S)
+
+. local ll = ics[1, 3]
+
+. local aic = ics[1, 5]
+
+. local bic = ics[1, 6]
+
+. outreg2 using "$results/table_2.doc", append stats(coef) label nodepvar dec(3) ///
+>         ctitle("cr_65") alpha(0.001, 0.01, 0.05) symbol(***, **, *) drop(i.cfips) noomit ///
+>     addstat("AIC", `aic', "BIC", `bic')
+results/table_2.doc
+dir : seeout
+
+. 
+. *==========================================================
+. * delete txt file
+. *==========================================================
+. cd "$results"
+C:\Users\szhou\OneDrive - southalabama.edu\env_mortality\analysis\results
+
+. local txtfiles: dir . files "*.txt"
+
+. foreach txt of local txtfiles {
+  2.         erase `txt'
+  3. }
+
+. 
+. *==========================================================
+. * end logging
+. *==========================================================
+. log close _all
+      name:  <unnamed>
+       log:  C:\Users\szhou\OneDrive - southalabama.edu\env_mortality\analysis\results/table_2.log
+  log type:  text
+ closed on:   8 Sep 2025, 11:23:59
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

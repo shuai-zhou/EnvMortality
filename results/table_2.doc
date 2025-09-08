@@ -1,0 +1,42 @@
+{\rtf1\fs24
+\trowd\trgaph75\trleft-75\intbl\trqc\clbrdrt\brdrs\cellx4608\clbrdrt\brdrs\cellx6048\clbrdrt\brdrs\cellx7488\clbrdrt\brdrs\cellx8928\clbrdrt\brdrs\cellx10800\clbrdrt\brdrs\cellx12240\clbrdrt\brdrs\cellx13680\clbrdrt\brdrs\cellx15120\clbrdrt\brdrs\cellx16704
+\ql \cell\qc (1)\cell\qc (2)\cell\qc (3)\cell\qc (4)\cell\qc (5)\cell\qc (6)\cell\qc (7)\cell\qc (8)\cell\row
+\trowd\trgaph75\trleft-75\trqc\cellx4608\cellx6048\cellx7488\cellx8928\cellx10800\cellx12240\cellx13680\cellx15120\cellx16704
+\trowd\trgaph75\trleft-75\trqc\clbrdrb\brdrs\cellx4608\clbrdrb\brdrs\cellx6048\clbrdrb\brdrs\cellx7488\clbrdrb\brdrs\cellx8928\clbrdrb\brdrs\cellx10800\clbrdrb\brdrs\cellx12240\clbrdrb\brdrs\cellx13680\clbrdrb\brdrs\cellx15120\clbrdrb\brdrs\cellx16704
+\ql VARIABLES\cell\qc cv_0_1\cell\qc cv_1_14\cell\qc cv_15_64\cell\qc cv_65\cell\qc cr_0_1\cell\qc cr_1_14\cell\qc cr_15_64\cell\qc cr_65\cell\row
+\trowd\trgaph75\trleft-75\trqc\cellx4608\cellx6048\cellx7488\cellx8928\cellx10800\cellx12240\cellx13680\cellx15120\cellx16704
+\ql \cell\qc \cell\qc \cell\qc \cell\qc \cell\qc \cell\qc \cell\qc \cell\qc \cell\row
+\ql Temperature\cell\qc 0.022***\cell\qc -0.004***\cell\qc 0.848***\cell\qc -10.807***\cell\qc 0.003**\cell\qc 0.001***\cell\qc 0.336***\cell\qc 2.907***\cell\row
+\ql PM2.5\cell\qc 0.028***\cell\qc -0.005***\cell\qc 0.011\cell\qc -3.340***\cell\qc -0.006***\cell\qc -0.007***\cell\qc -0.326***\cell\qc -3.349***\cell\row
+\ql 0b.metro#c.tmean#c.tmean#c.pm25\cell\qc 0.000**\cell\qc 0.000***\cell\qc -0.006***\cell\qc 0.058***\cell\qc -0.000***\cell\qc -0.000*\cell\qc -0.002***\cell\qc -0.027***\cell\row
+\ql 1.metro#c.tmean#c.tmean#c.pm25\cell\qc -0.000**\cell\qc 0.000***\cell\qc -0.001***\cell\qc 0.041***\cell\qc -0.000***\cell\qc 0.000***\cell\qc -0.000***\cell\qc -0.011***\cell\row
+\ql Income\cell\qc 0.001\cell\qc 0.000***\cell\qc -0.059***\cell\qc -0.758***\cell\qc -0.000**\cell\qc -0.000***\cell\qc -0.039***\cell\qc -0.398***\cell\row
+\ql College\cell\qc -0.023***\cell\qc -0.001***\cell\qc -0.099***\cell\qc -2.301***\cell\qc -0.004***\cell\qc -0.001***\cell\qc -0.007*\cell\qc -0.603***\cell\row
+\ql Insurance\cell\qc -0.004**\cell\qc -0.000***\cell\qc 0.117***\cell\qc -2.824***\cell\qc -0.000\cell\qc -0.000\cell\qc 0.091***\cell\qc -0.236***\cell\row
+\ql pov\cell\qc -0.016***\cell\qc -0.000***\cell\qc -0.012\cell\qc 0.340\cell\qc -0.002***\cell\qc -0.000\cell\qc 0.000\cell\qc 0.070\cell\row
+\ql 0 pop\cell\qc -0.000**\cell\qc \cell\qc \cell\qc \cell\qc 0.000\cell\qc \cell\qc \cell\qc \cell\row
+\ql year = 2010\cell\qc -0.440***\cell\qc -0.038***\cell\qc -1.850***\cell\qc -27.282***\cell\qc 0.005*\cell\qc -0.004***\cell\qc -0.212***\cell\qc 8.279***\cell\row
+\ql year = 2011\cell\qc -0.458***\cell\qc -0.041***\cell\qc -1.976***\cell\qc -59.595***\cell\qc 0.068***\cell\qc 0.013***\cell\qc 0.041\cell\qc 23.138***\cell\row
+\ql year = 2012\cell\qc -0.501***\cell\qc -0.056***\cell\qc -2.128***\cell\qc -60.329***\cell\qc 0.080***\cell\qc 0.010***\cell\qc -0.257***\cell\qc 18.577***\cell\row
+\ql year = 2013\cell\qc -0.739***\cell\qc -0.063***\cell\qc -1.193***\cell\qc -67.601***\cell\qc 0.090***\cell\qc 0.023***\cell\qc 0.335***\cell\qc 25.561***\cell\row
+\ql year = 2014\cell\qc -0.845***\cell\qc -0.068***\cell\qc -0.915***\cell\qc -94.137***\cell\qc 0.083***\cell\qc 0.029***\cell\qc 0.230***\cell\qc 13.537***\cell\row
+\ql year = 2015\cell\qc -0.771***\cell\qc -0.060***\cell\qc -0.630***\cell\qc -66.433***\cell\qc 0.080***\cell\qc 0.036***\cell\qc 0.214***\cell\qc 29.904***\cell\row
+\ql year = 2016\cell\qc -0.669***\cell\qc -0.055***\cell\qc 0.156\cell\qc -96.395***\cell\qc 0.076***\cell\qc 0.039***\cell\qc 0.151***\cell\qc 18.820***\cell\row
+\ql year = 2017\cell\qc -0.790***\cell\qc -0.067***\cell\qc 0.929***\cell\qc -94.448***\cell\qc -0.005\cell\qc 0.025***\cell\qc 0.763***\cell\qc 35.350***\cell\row
+\ql year = 2018\cell\qc -0.987***\cell\qc -0.083***\cell\qc 1.329***\cell\qc -123.565***\cell\qc -0.065***\cell\qc 0.011***\cell\qc 0.868***\cell\qc 27.448***\cell\row
+\ql year = 2019\cell\qc -1.084***\cell\qc -0.089***\cell\qc 1.115***\cell\qc -156.175***\cell\qc -0.070***\cell\qc 0.013***\cell\qc 0.771***\cell\qc 12.707***\cell\row
+\ql 1 pop\cell\qc \cell\qc 0.000***\cell\qc \cell\qc \cell\qc \cell\qc -0.000***\cell\qc \cell\qc \cell\row
+\ql 2 pop\cell\qc \cell\qc \cell\qc -0.000***\cell\qc \cell\qc \cell\qc \cell\qc -0.000***\cell\qc \cell\row
+\ql 3 pop\cell\qc \cell\qc \cell\qc \cell\qc 0.000*\cell\qc \cell\qc \cell\qc \cell\qc -0.000***\cell\row
+\ql Constant\cell\qc 14.431***\cell\qc 0.994***\cell\qc 85.091***\cell\qc 2,569.876***\cell\qc 2.303***\cell\qc 0.649***\cell\qc 14.625***\cell\qc 594.522***\cell\row
+\ql \cell\qc \cell\qc \cell\qc \cell\qc \cell\qc \cell\qc \cell\qc \cell\qc \cell\row
+\ql Observations\cell\qc 33,830\cell\qc 33,830\cell\qc 33,830\cell\qc 33,830\cell\qc 33,830\cell\qc 33,830\cell\qc 33,830\cell\qc 33,830\cell\row
+\ql R-squared\cell\qc 0.501\cell\qc 0.670\cell\qc 0.376\cell\qc 0.543\cell\qc 0.365\cell\qc 0.447\cell\qc 0.573\cell\qc 0.339\cell\row
+\ql Number of cfips\cell\qc 3,076\cell\qc 3,076\cell\qc 3,076\cell\qc 3,076\cell\qc 3,076\cell\qc 3,076\cell\qc 3,076\cell\qc 3,076\cell\row
+\ql AIC\cell\qc 26326\cell\qc -170918\cell\qc 157458\cell\qc 365233\cell\qc -76733\cell\qc -173706\cell\qc 88751\cell\qc 287824\cell\row
+\trowd\trgaph75\trleft-75\trqc\trbrdrb\brdrs\clbrdrb\brdrs\cellx4608\clbrdrb\brdrs\cellx6048\clbrdrb\brdrs\cellx7488\clbrdrb\brdrs\cellx8928\clbrdrb\brdrs\cellx10800\clbrdrb\brdrs\cellx12240\clbrdrb\brdrs\cellx13680\clbrdrb\brdrs\cellx15120\clbrdrb\brdrs\cellx16704
+\ql BIC\cell\qc 26494\cell\qc -170750\cell\qc 157626\cell\qc 365401\cell\qc -76564\cell\qc -173537\cell\qc 88920\cell\qc 287993\cell\row
+\pard\qc
+Standard errors in parentheses\par
+*** p<0.001, ** p<0.01, * p<0.05\par
+}
