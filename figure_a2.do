@@ -7,11 +7,9 @@ macro drop _all
 set scheme lean1 // plotplain s2mono s1color s1mono lean1
 
 * Home/Office
-cap cd "C:/Users/szhou/OneDrive - southalabama.edu/env_mortality/analysis/"
-cap cd "E:/OneDrive - southalabama.edu/env_mortality/analysis/"
+cap cd "D:/EnvMortality_modeling/"
 global data = "$pwd" + "data"
 global results = "$pwd" + "results"
-global data_reg = "$pwd" + "data_reg_results"
 
 *==========================================================
 * cv
